@@ -60,7 +60,7 @@ class SalesManagoAuthDataTest(TestCase):
         self.assertEqual(type(self.auth.requestAuthDict), dict)
         self.assertIn('apiKey', self.auth.requestAuthDict)
         self.assertIn('clientId', self.auth.requestAuthDict)
-        self.assertIn('requestSignature', self.auth.requestAuthDict)
+        self.assertIn('sha', self.auth.requestAuthDict)
         self.assertIn('requestTime', self.auth.requestAuthDict)
 
     def test_request_auth_data_dict_leaking(self):

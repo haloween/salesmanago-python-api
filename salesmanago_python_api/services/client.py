@@ -1,4 +1,6 @@
 import re
+import json
+import logging
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -6,6 +8,12 @@ from requests.packages.urllib3.util.retry import Retry
 from salesmanago_python_api.data.auth import SalesManagoAuthData
 from salesmanago_python_api.data.client import SalesManagoClientData
 
+
+logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 class SalesManagoClientService:
 
@@ -29,6 +37,15 @@ class SalesManagoClientService:
             raise ValueError('serverDomain is invalid, provide like appx.salesmanago.xxx')
 
         self.serverDomain = serverDomain
+
+        logger.debug(json.dumps({
+            'action': '__init__',
+            'apiKey': apiKey,
+            'clientId': clientId,
+            'apiSecret': apiSecret,
+            'serverDomain': serverDomain
+        }))
+
         self._authData = SalesManagoAuthData(
             apiKey = apiKey,
             apiSecret = apiSecret,
@@ -45,14 +62,26 @@ class SalesManagoClientService:
         return SalesManagoClientData
 
     def createClientData(self, client_data):
+        
+        logger.debug(json.dumps({
+            'action': 'createClientData',
+            'client_data': client_data
+        }))
+
         return self.ClientData(**client_data)
 
-    def _generate_payload(self, clientData):
+    def _generate_payload(self, clientData, request_type):
         if not isinstance(clientData, self.ClientData):
             raise TypeError('payload accepts only SalesManagoClientData instances, call .ClientData or .createClientData')
-
+        
         payload = self._authData.requestAuthDict
-        payload.update(clientData.requestDict)
+        payload.update(clientData.requestDict(request_type))
+
+        logger.debug(json.dumps({
+            'action': '_generate_payload',
+            'payload': payload
+        }))
+
         return payload
 
     _requestsSession = None
@@ -79,7 +108,13 @@ class SalesManagoClientService:
         self._requestsSession = session
         return session
     
-    def _generate_request(self, clientData, action, method='GET'):
+    def _generate_request(self, clientData, action, method='POST'):
+
+        logger.debug(json.dumps({
+            'action': '_generate_request',
+            'action': action,
+            'method': method
+        }))
 
         if not isinstance(clientData, self.ClientData):
             raise TypeError('_generate_request accepts only SalesManagoClientData instances')
@@ -97,22 +132,53 @@ class SalesManagoClientService:
             action=self.ACTION_URLS[action]
         )
 
+        payload = self._generate_payload(clientData, action)
+
         rq = requests.Request(
             method=method, 
             url=url,
-            data=self._generate_payload(clientData)
+            data=json.dumps(payload)
         )
 
-        return rq
+        return self._requestsSession.prepare_request(rq)
 
     def insert(self, clientData):
-        if not isinstance(clientData, self.ClientData, 'insert'):
+        if not isinstance(clientData, self.ClientData):
             raise TypeError('insert accepts only SalesManagoClientData instances')
 
-        request = self._generate_request(clientData)
+        request = self._generate_request(clientData, 'insert')
         response = self._requestsSession.send(
             request,
             timeout=self.API_REQUEST_DEFAULT_TIMEOUT
         )
+
+        logger.debug(json.dumps({
+            'action': 'insert',
+            'request_body': request.body,
+            'response_status': response.status_code,
+            'response_json': response.json(),
+            'clientData': clientData.requestDict('insert')
+        }))
+
+        return response
+    
+    def update(self, clientData):
+        if not isinstance(clientData, self.ClientData):
+            raise TypeError('update accepts only SalesManagoClientData instances')
+
+        request = self._generate_request(clientData, 'update')
+        response = self._requestsSession.send(
+            request,
+            timeout=self.API_REQUEST_DEFAULT_TIMEOUT
+        )
+
+        logger.debug(json.dumps({
+            'action': 'update',
+            'request_body': request.body,
+            'response_status': response.status_code,
+            'response_json': response.json(),
+            'clientData': clientData.requestDict('update')
+        }))
+
         return response
 

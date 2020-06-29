@@ -23,7 +23,7 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
         self.assertEqual(clientClass.clientId, clientId)
         self.assertEqual(clientClass.apiSecret, apiSecret)
         self.assertEqual(clientClass.serverDomain, serverDomain)
-    
+
     def test_client_class_validate_server_url(self) -> None:
         apiKey = tests_utils.gen_string(12)
         clientId = tests_utils.gen_string(12)
@@ -48,21 +48,38 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
             'owner': 'owner@mail.pl'
         }), SalesManagoClientData)
 
-    def test_generate_request_payload_accepts_only_clientdata(self) -> None:
+    def test_generate_request_payload_insert_accepts_only_clientdata(self) -> None:
         with self.assertRaises(TypeError):
-            self.clientClass._generate_payload({})
+            self.clientClass._generate_payload({}, 'insert')
 
-    def test_generate_request_payload_returns_dict(self) -> None:
-        self.assertIsInstance(self.clientClass._generate_payload(self.clientDataMock), dict)
+    def test_generate_request_payload_insert_returns_dict(self) -> None:
+        self.assertIsInstance(self.clientClass._generate_payload(self.clientDataMock, 'insert'), dict)
 
-    def test_generate_request_payload_has_required_properties(self) -> None:
-        payload = self.clientClass._generate_payload(self.clientDataMock)
+    def test_generate_request_payload_update_accepts_only_clientdata(self) -> None:
+        with self.assertRaises(TypeError):
+            self.clientClass._generate_payload({}, 'update')
+
+    def test_generate_request_payload_update_dict(self) -> None:
+        self.assertIsInstance(self.clientClass._generate_payload(self.clientDataMock, 'update'), dict)
+
+    def test_generate_request_payload_insert_has_required_properties(self) -> None:
+        payload = self.clientClass._generate_payload(self.clientDataMock, 'insert')
         self.assertIn('contact', payload)
         self.assertIn('email', payload['contact'])
         self.assertIn('owner', payload)
         self.assertIn('apiKey', payload)
         self.assertIn('clientId', payload)
-        self.assertIn('requestSignature', payload)
+        self.assertIn('sha', payload)
+        self.assertIn('requestTime', payload)
+        self.assertNotIn('apiSecret', payload)
+    
+    def test_generate_request_payload_update_has_required_properties(self) -> None:
+        payload = self.clientClass._generate_payload(self.clientDataMock, 'update')
+        self.assertIn('email', payload)
+        self.assertIn('owner', payload)
+        self.assertIn('apiKey', payload)
+        self.assertIn('clientId', payload)
+        self.assertIn('sha', payload)
         self.assertIn('requestTime', payload)
         self.assertNotIn('apiSecret', payload)
 
@@ -99,7 +116,7 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
     def test_generate_request_return(self) -> None:
         self.assertIsInstance(
             self.clientClass._generate_request(self.clientDataMock, action='insert'), 
-            requests.Request
+            requests.PreparedRequest
         )
 
     def test_generate_request_handle_invalid_method_arg(self) -> None:
@@ -113,5 +130,5 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
             self.clientClass._generate_request(
                 self.clientDataMock, action='insert', method='GET'
             ), 
-            requests.Request
+            requests.PreparedRequest
         )

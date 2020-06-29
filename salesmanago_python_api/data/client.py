@@ -171,8 +171,7 @@ class SalesManagoClientData:
             k.replace('address_', ''): getattr(self, k) for k in ADDRESS_ATTRS if getattr(self, k)
         }
 
-    @property
-    def contact(self) -> dict:
+    def contact(self, request_format) -> dict:
         CONTACT_ATTRS = [
             'email',
             'fax',
@@ -183,14 +182,16 @@ class SalesManagoClientData:
             'address'
         ]
 
+        if request_format == 'update':
+            CONTACT_ATTRS.remove('email')
+
         return {
             k: getattr(self, k) for k in CONTACT_ATTRS if getattr(self, k) is not None
         }
 
-    @property
-    def requestDict(self) -> dict:
+    def requestDict(self, request_format) -> dict:
         ALL_ATTRS = [
-            'owner', 'contact', 'externalId', 'newEmail',  'lang', 'forceOptOut', 'forceOptIn', 
+            'owner', 'externalId', 'newEmail',  'lang', 'forceOptOut', 'forceOptIn', 
             'forcePhoneOptOut', 'forcePhoneOptIn', 'useApiDoubleOptIn', 'province', 'birthday'
         ]
 
@@ -205,6 +206,13 @@ class SalesManagoClientData:
         rdata.update({
             k: getattr(self, k) for k in ITERABLE_ATTRS if any(getattr(self, k))
         })
+
+        c_data = self.contact(request_format)
+        if any(c_data):
+            rdata['contact'] = c_data
+
+        if request_format == 'update':
+            rdata['email'] = self.email
 
         if self.birthday:
             rdata['birthday'] = self.birthDateConverted

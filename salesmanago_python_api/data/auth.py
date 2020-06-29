@@ -39,6 +39,6 @@ class SalesManagoAuthData:
         return {
             'apiKey': self.apiKey,
             'clientId': self.clientId,
-            'requestSignature': self.requestSignature,
+            'sha': self.requestSignature,
             'requestTime': self.requestTime
         }

@@ -11,7 +11,7 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
 
     def test_address_complete(self):
         self.assertIsInstance(self.richClientClass.address, dict)
-        
+
         self.assertEqual(self.richClientClass.address, {
             "streetAddress": self.rcd['address_streetAddress'],
             "zipCode":self.rcd['address_zipCode'],
@@ -49,10 +49,13 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
             rand_address = SalesManagoClientData(**initial_data)
             self.assertEqual(rand_address.address, validate_against)
 
-    def test_contact_empty(self):
-        self.assertEqual(self.clientClass.contact, {'email': self.CLIENT_MAIL})
+    def test_contact_empty_insert(self):
+        self.assertEqual(self.clientClass.contact('insert'), {'email': self.CLIENT_MAIL})
     
-    def get_contact_test_data_set(self, only_contact=False):
+    def test_contact_empty_update(self):
+        self.assertEqual(self.clientClass.contact('update'), {})
+    
+    def get_contact_test_data_set(self, request_format, only_contact=False):
         TEST_ARGS = self.CONTACT_FIELDS
 
         #IF we need only contact data
@@ -63,7 +66,11 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
             initial_data = self._rich_client_data(no_address=True)
 
         #email must be always present
-        validate_against = {'email': self.CLIENT_MAIL}
+        if request_format == 'insert':
+            validate_against = {'email': self.CLIENT_MAIL}
+        #update nope
+        else:
+            validate_against = {}
 
         num_args = random.randint(1,len(TEST_ARGS))
         RANDOM_TEST_ARGS = random.sample(TEST_ARGS, num_args)
@@ -83,20 +90,33 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
 
         return (initial_data, validate_against)
 
-    def test_contact_partial_data(self):
+    def test_contact_partial_data_insert(self):
         for x in range(50):
-            initial_data, validate_against = self.get_contact_test_data_set()
+            initial_data, validate_against = self.get_contact_test_data_set('insert')
             rand_address = SalesManagoClientData(**initial_data)
-            self.assertEqual(rand_address.contact, validate_against)
+            self.assertEqual(rand_address.contact('insert'), validate_against)
+    
+    def test_contact_partial_data_update(self):
+        for x in range(50):
+            initial_data, validate_against = self.get_contact_test_data_set('update')
+            rand_address = SalesManagoClientData(**initial_data)
+            self.assertEqual(rand_address.contact('update'), validate_against)
 
-    def test_requestDict_empty(self):
+    def test_requestDict_empty_for_insert(self):
         AGAINST = {
             'contact': {'email': self.CLIENT_MAIL},
             'owner': self.OWNER_MAIL
         }
-        self.assertEqual(self.clientClass.requestDict, AGAINST)
+        self.assertEqual(self.clientClass.requestDict(request_format='insert'), AGAINST)
+    
+    def test_requestDict_empty_for_update(self):
+        AGAINST = {
+            'email': self.CLIENT_MAIL,
+            'owner': self.OWNER_MAIL
+        }
+        self.assertEqual(self.clientClass.requestDict(request_format='update'), AGAINST)
 
-    def test_requestDict_with_partial_data(self):
+    def test_requestDict_with_partial_data_for_insert(self):
         TEST_ARGS = [
             'birthday', 'province', 'forceOptOut', 'forceOptIn', 'forcePhoneOptOut', 'forcePhoneOptIn', 'useApiDoubleOptIn', 
             'newEmail', 'externalId', 'lang', 'tags', 'removeTags', 'properties', 'contact'
@@ -116,7 +136,8 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
             RANDOM_TEST_ARGS.append('owner')
 
             if 'contact' in RANDOM_TEST_ARGS:
-                contact_initial_data, contact_validate_against = self.get_contact_test_data_set(only_contact=True)
+                contact_initial_data, contact_validate_against = self.get_contact_test_data_set(
+                    'insert', only_contact=True)
                 initial_data.update(contact_initial_data)
                 validate_against['contact'] = contact_validate_against
 
@@ -151,4 +172,4 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
                     rand_address.add_property(key,value)
                     validate_against['properties'][key] = value
 
-            self.assertEqual(rand_address.requestDict, validate_against)
+            self.assertEqual(rand_address.requestDict(request_format='insert'), validate_against)
