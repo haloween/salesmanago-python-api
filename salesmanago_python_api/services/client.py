@@ -24,7 +24,8 @@ class SalesManagoClientService:
     ACTION_URLS = {
         'insert': '/api/contact/insert',
         'upsert': '/api/contact/upsert',
-        'update': '/api/contact/update'
+        'update': '/api/contact/update',
+        'delete': '/api/contact/delete'
     }
 
     def __init__(self, apiKey, clientId, apiSecret, serverDomain):
@@ -56,34 +57,7 @@ class SalesManagoClientService:
             retries=self.API_RETRY_COUNT, 
             backoff_factor=self.API_BACKOFF_FACTOR
         )
-
-    @property
-    def ClientData(self):
-        return SalesManagoClientData
-
-    def createClientData(self, client_data):
-        
-        logger.debug(json.dumps({
-            'action': 'createClientData',
-            'client_data': client_data
-        }))
-
-        return self.ClientData(**client_data)
-
-    def _generate_payload(self, clientData, request_type):
-        if not isinstance(clientData, self.ClientData):
-            raise TypeError('payload accepts only SalesManagoClientData instances, call .ClientData or .createClientData')
-        
-        payload = self._authData.requestAuthDict
-        payload.update(clientData.requestDict(request_type))
-
-        logger.debug(json.dumps({
-            'action': '_generate_payload',
-            'payload': payload
-        }))
-
-        return payload
-
+    
     _requestsSession = None
     def session_setup(self, retries=1, backoff_factor=1, status_forcelist=(500, 502, 504),):
         session = requests.Session()
@@ -107,7 +81,33 @@ class SalesManagoClientService:
 
         self._requestsSession = session
         return session
-    
+
+    @property
+    def ClientData(self):
+        return SalesManagoClientData
+
+    def createClientData(self, client_data):
+        logger.debug(json.dumps({
+            'action': 'createClientData',
+            'client_data': client_data
+        }))
+
+        return self.ClientData(**client_data)
+
+    def _generate_payload(self, clientData, request_type):
+        if not isinstance(clientData, self.ClientData):
+            raise TypeError('payload accepts only SalesManagoClientData instances, call .ClientData or .createClientData')
+
+        payload = self._authData.requestAuthDict
+        payload.update(clientData.requestDict(request_type))
+
+        logger.debug(json.dumps({
+            'action': '_generate_payload',
+            'payload': payload
+        }))
+
+        return payload
+
     def _generate_request(self, clientData, action, method='POST'):
 
         logger.debug(json.dumps({
@@ -181,4 +181,23 @@ class SalesManagoClientService:
         }))
 
         return response
+    
+    def upsert(self, clientData):
+        if not isinstance(clientData, self.ClientData):
+            raise TypeError('insert accepts only SalesManagoClientData instances')
 
+        request = self._generate_request(clientData, 'upsert')
+        response = self._requestsSession.send(
+            request,
+            timeout=self.API_REQUEST_DEFAULT_TIMEOUT
+        )
+
+        logger.debug(json.dumps({
+            'action': 'upsert',
+            'request_body': request.body,
+            'response_status': response.status_code,
+            'response_json': response.json(),
+            'clientData': clientData.requestDict('insert')
+        }))
+
+        return response

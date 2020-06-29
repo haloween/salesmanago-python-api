@@ -10,7 +10,7 @@ from client.test_data_unit import SalesManagoClientDataUnitTest
 from client.test_data_feature import SalesManagoClientDataFeatureTest
 
 from client.test_services_unit import SalesManagoClientTest
-from client.test_services_feature import SalesManagoClientFeatureTest
+from client.test_services_integration import SalesManagoClientIntegrationTest
 
 
 if __name__ == "__main__":

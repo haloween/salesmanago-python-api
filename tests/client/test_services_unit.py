@@ -105,10 +105,10 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
         with self.assertRaises(TypeError):
             self.clientClass._generate_request(self.clientDataMock)
     
-    def test_generate_request_action_is_validated(self):
+    def test_generate_request_requires_valid_action(self):
         with self.assertRaises(ValueError):
             self.clientClass._generate_request(self.clientDataMock, action='fail')
-
+    
     def test_generate_request_takes_only_clientData(self):
         with self.assertRaises(TypeError):
             self.clientClass._generate_request({}, action='insert')
