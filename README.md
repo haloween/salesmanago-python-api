@@ -48,7 +48,7 @@ I've needed only a few client methods and those were implemented.
 ## Usage
 
 Start with import ;)
-`from salesmanago_python_api.client import SalesManagoClientService`
+`from salesmanago_python_api.services import SalesManagoClientService`
 
 Since SalesManago has different data requirements for all supported methods, it's required to interface with the client service using `SalesManagoClientData` class. 
 It will handle all the required formatting for you.

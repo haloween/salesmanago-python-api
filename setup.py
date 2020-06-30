@@ -1,8 +1,13 @@
-from setuptools import setup
+import setuptools
 
-setup(name='salesmanago_python_api',
-      version='0.2',
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+setuptools.setup(name='salesmanago_python_api',
+      version='0.3',
       description='Client for Salesmanago API.',
+      long_description=long_description,
+      long_description_content_type="text/markdown",
       url='https://github.com/haloween/salesmanago-python-api',
       keywords = "salesmanago, api",
       classifiers=[
@@ -16,8 +21,13 @@ setup(name='salesmanago_python_api',
       author_email='halgravity+githubrepo@gmail.com',
       license='MIT',
       zip_safe=True,
-      packages=['salesmanago_python_api'],
+      packages=[
+          'salesmanago_python_api',
+          'salesmanago_python_api.data',
+          'salesmanago_python_api.services',
+      ],
       include_package_data=True,
+      python_requires='>=3.7',
       install_requires=[
           'requests'
       ]

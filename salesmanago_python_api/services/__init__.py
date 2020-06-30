@@ -1,0 +1,3 @@
+from .client import SalesManagoClientService
+
+SalesManagoClientService = SalesManagoClientService
