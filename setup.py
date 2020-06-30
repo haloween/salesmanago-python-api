@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='salesmanago_python_api',
-      version='0.1',
+      version='0.2',
       description='Client for Salesmanago API.',
       url='https://github.com/haloween/salesmanago-python-api',
       keywords = "salesmanago, api",
