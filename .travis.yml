@@ -1,9 +1,13 @@
 language: python
 python:
-  - "3.7"
-  - "3.8"
-# command to install dependencies
+- '3.7'
+- '3.8'
 install:
-  - pip install requests
-# command to run tests
+- pip install requests
 script: python3 tests/run.py
+deploy:
+  provider: pypi
+  username: __token__
+  password:
+    secure: DAKrEmKNg26ZHUa+v3Yk/UnOt0YCJYx7u6B/jJTeupUI/7GZCdEiZ/wB4GVXO+DWRb3WNJSPcl3nemW6ke6Ve0h/+FtfJ5UHIfKBfjhx7dRXjKcDWsOorQB6mxEoE+WuYoVzXEfCisG9wTPK8JXD1WybAdwld584lEWq7B+lUk6JuvVxxjYf/E56fY4L84yOpI8awFOoviLEKkHlzme8i397BdD08S0FP14i276X0vrGF3yR8PXqrzKcMGDiCgaCSTB3YpaH5KjEZ4fclVTdwicK7YTKny4kAWyXFwqCxDJ9h+7f0Nn+HaOhw64D6vteycec1XlES0GOhHZhlniqv9Ti3HT0f0cmwUUYMrSzvDqYVeNFasPd6tEYrnqgvNvCtozuECzSr5kjpfFEedIWWbNVLkaKzaL5V2jiNFFpl9TWBbFpxMc1OMXCog+OaMaJFGuG8wUd+FQTKYjnO/XrJTbM2Zsv8T3+vy2TgS7GoVDHhpFDADFEUXycIZpSZrpoygHBF+xFBhbL3Y3Oii11oVy2t6DOJFg5HhNED3ay7tITMf4h3rTO9vAHzM7NN/AhjJRVkjgnKKSDnfTkNC1jaExTl2Cy59X8uE9G7OLTK0zsEUdSzFiEENwQFq0LUM9M3rry93gLaIaeudod+h+FRXGyucH7VBo2JyzOVt2t3Fs=
+  skip_existing: true

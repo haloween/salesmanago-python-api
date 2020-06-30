@@ -6,7 +6,7 @@ setup(name='salesmanago_python_api',
       url='https://github.com/haloween/salesmanago-python-api',
       keywords = "salesmanago, api",
       classifiers=[
-          'Development Status :: 5 - Alpha',
+          'Development Status :: 4 - Beta',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
           'Programming Language :: Python :: 3.7',
