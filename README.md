@@ -50,25 +50,66 @@ I've needed only a few client methods and those were implemented.
 Start with import ;)
 `from salesmanago_python_api.client import SalesManagoClientService`
 
-Since SalesManago has different data requirements for all supported methods, it's required to interface with the client service using `SalesManagoClientData` class. It will handle all the required formatting for you. Example below:
+Since SalesManago has different data requirements for all supported methods, it's required to interface with the client service using `SalesManagoClientData` class. 
+It will handle all the required formatting for you.
 
 ```python
-clientClass = SalesManagoClientService(
+
+clientServiceClass = SalesManagoClientService(
     apiKey=API_KEY,
     clientId=CLIENT_ID,
     apiSecret=API_SECRET,
     serverDomain=SERVER_DOMAIN
 )
 
-clientDataClass = clientClass.ClientData
+clientDataClass = clientServiceClass.ClientData
 clientData = clientDataClass(
     email='unittest@salesmanagopythonapi.pl',
     owner=REAL_OWNER
 )
 
-response = clientClass.insert(clientData)
+response = clientServiceClass.insert(clientData)
 response.raise_for_status()
 response_json = response.json()
+
+```
+
+`SalesManagoClientService` needs to be initialized only once, it setups requests Session and handles the request build process.
+
+```python
+
+clientServiceClass = SalesManagoClientService(
+    apiKey=API_KEY,
+    clientId=CLIENT_ID,
+    apiSecret=API_SECRET,
+    serverDomain=SERVER_DOMAIN
+)
+
+#insert new client into SM database.
+clientDataClass = clientServiceClass.ClientData
+clientData = clientDataClass(
+    email='client@salesmanagopythonapi.pl',
+    owner='owner@company.com'
+)
+clientServiceClass.insert(clientData)
+
+
+#update SM client with newMail and state
+clientUpdateData = clientDataClass(
+    email='client@salesmanagopythonapi.pl',
+    owner='owner@company.com',
+    state='CUSTOMER',
+    newMail='newmail@salesmanagopythonapi.pl'
+)
+clientServiceClass.update(clientUpdateData)
+
+#delete him
+clientDeleteData = clientDataClass(
+    email='newmail@salesmanagopythonapi.pl',
+    owner='owner@company.com'
+)
+clientServiceClass.delete(clientData)
+
 ```
 
 ## Properties on SalesManagoClientData
@@ -116,3 +157,16 @@ Properties have those too :)
 clientData.add_property('key', 'value')
 clientData.remove_property('key')
 ```
+
+## Running tests VS real API
+
+To run real tests vs REAL API some enviroment variables need to be set:
+
+* TEST_REAL_API -> True
+* REAL_API_KEY
+* REAL_API_SECRET
+* REAL_CLIENT_ID
+* REAL_OWNER
+* REAL_SERVER_DOMAIN
+
+To set enviroment variables use `set` in Linux or `export` in Windows.
