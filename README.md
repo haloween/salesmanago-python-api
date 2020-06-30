@@ -52,7 +52,8 @@ Start with import ;)
 
 Since SalesManago has different data requirements for all supported methods, it's required to interface with the client service using `SalesManagoClientData` class. It will handle all the required formatting for you. Example below:
 
-`clientClass = SalesManagoClientService(
+```python
+clientClass = SalesManagoClientService(
     apiKey=API_KEY,
     clientId=CLIENT_ID,
     apiSecret=API_SECRET,
@@ -67,7 +68,8 @@ clientData = clientDataClass(
 
 response = clientClass.insert(clientData)
 response.raise_for_status()
-response_json = response.json()`
+response_json = response.json()
+```
 
 ## Properties on SalesManagoClientData
 
@@ -100,12 +102,17 @@ response_json = response.json()`
 
 Tags and removeTags have nice methods:
 
-`clientData.add_tag('XXX')
+```python
+clientData.add_tag('XXX')
 clientData.remove_tag('XXX')
 
 clientData.add_removeTags('XXX')
-clientData.remove_removeTags('XXX')`
+clientData.remove_removeTags('XXX')
+```
 
 Properties have those too :)
-`clientData.add_property('key', 'value')
-clientData.remove_property('key')`
+
+```python
+clientData.add_property('key', 'value')
+clientData.remove_property('key')
+```
