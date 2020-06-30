@@ -47,7 +47,8 @@ class SalesManagoClientIntegrationTest(SalesManagoClientTestBase):
         rtn = self.clientClass.update(self.clientDataMock)
         self.assertEqual(rtn.status_code, 200)
         self.assertIn('contactId', rtn.json())
-    
+
+
     @patch.object(SalesManagoClientService, 'upsert')
     def test_upsert_action(self, mock_get) -> None:
         mock_get.return_value.status_code = 200
@@ -59,6 +60,19 @@ class SalesManagoClientIntegrationTest(SalesManagoClientTestBase):
         }
 
         rtn = self.clientClass.upsert(self.clientDataMock)
+        self.assertEqual(rtn.status_code, 200)
+        self.assertIn('success', rtn.json())
+    
+    @patch.object(SalesManagoClientService, 'delete')
+    def test_delete_action(self, mock_get) -> None:
+        mock_get.return_value.status_code = 200
+        mock_get.return_value.json.return_value = {
+            "success": True,
+            "message": [],
+            "result": "Contact deleted"
+        }
+
+        rtn = self.clientClass.delete('')
         self.assertEqual(rtn.status_code, 200)
         self.assertIn('success', rtn.json())
 

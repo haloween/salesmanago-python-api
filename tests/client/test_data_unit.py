@@ -146,3 +146,16 @@ class SalesManagoClientDataUnitTest(SalesManagoTestsBase):
         with self.assertRaises(TypeError):
             cd = SalesManagoClientData(**_rich_client_data)
 
+    def test_requestDict_requires_request_format(self):
+        with self.assertRaises(TypeError):
+            self.clientClass.requestDict()
+
+    def test_requestDict_accepts_only_allowed_formats(self):
+        with self.assertRaises(ValueError):
+            self.clientClass.requestDict(request_format='fail')
+    
+    def test_requestDict_works_with_allowed_formats(self):
+        self.assertIsInstance(self.clientClass.requestDict(request_format='insert'), dict)
+        self.assertIsInstance(self.clientClass.requestDict(request_format='update'), dict)
+        self.assertIsInstance(self.clientClass.requestDict(request_format='upsert'), dict)
+        self.assertIsInstance(self.clientClass.requestDict(request_format='delete'), dict)

@@ -62,6 +62,13 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
     def test_generate_request_payload_update_dict(self) -> None:
         self.assertIsInstance(self.clientClass._generate_payload(self.clientDataMock, 'update'), dict)
 
+    def test_generate_request_payload_delete_accepts_only_clientdata(self) -> None:
+        with self.assertRaises(TypeError):
+            self.clientClass._generate_payload({}, 'delete')
+
+    def test_generate_request_delete_update_dict(self) -> None:
+        self.assertIsInstance(self.clientClass._generate_payload(self.clientDataMock, 'delete'), dict)
+
     def test_generate_request_payload_insert_has_required_properties(self) -> None:
         payload = self.clientClass._generate_payload(self.clientDataMock, 'insert')
         self.assertIn('contact', payload)
@@ -113,7 +120,7 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
         with self.assertRaises(TypeError):
             self.clientClass._generate_request({}, action='insert')
 
-    def test_generate_request_return(self) -> None:
+    def test_generate_request_returns_prepared_request(self) -> None:
         self.assertIsInstance(
             self.clientClass._generate_request(self.clientDataMock, action='insert'), 
             requests.PreparedRequest

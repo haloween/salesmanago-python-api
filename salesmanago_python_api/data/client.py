@@ -189,7 +189,20 @@ class SalesManagoClientData:
             k: getattr(self, k) for k in CONTACT_ATTRS if getattr(self, k) is not None
         }
 
+    ALLOWED_FORMATS = ['insert', 'update', 'delete', 'upsert']
+
     def requestDict(self, request_format) -> dict:
+
+        if request_format not in self.ALLOWED_FORMATS:
+            raise ValueError('Allowed formats are %s' % self.ALLOWED_FORMATS)
+
+        #delete is super short
+        if request_format == 'delete':
+            return {
+                'email': self.email,
+                'owner': self.owner
+            }
+
         ALL_ATTRS = [
             'owner', 'externalId', 'newEmail',  'lang', 'forceOptOut', 'forceOptIn', 
             'forcePhoneOptOut', 'forcePhoneOptIn', 'useApiDoubleOptIn', 'province', 'birthday'
@@ -211,10 +224,14 @@ class SalesManagoClientData:
         if any(c_data):
             rdata['contact'] = c_data
 
+        if self.birthday:
+            rdata['birthday'] = self.birthDateConverted
+
+        #those requests need to have email on them ...
         if request_format == 'update':
             rdata['email'] = self.email
 
-        if self.birthday:
-            rdata['birthday'] = self.birthDateConverted
+        if request_format == 'upsert':
+            rdata['email'] = self.email
 
         return rdata

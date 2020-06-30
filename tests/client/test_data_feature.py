@@ -95,7 +95,7 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
             initial_data, validate_against = self.get_contact_test_data_set('insert')
             rand_address = SalesManagoClientData(**initial_data)
             self.assertEqual(rand_address.contact('insert'), validate_against)
-    
+
     def test_contact_partial_data_update(self):
         for x in range(50):
             initial_data, validate_against = self.get_contact_test_data_set('update')
@@ -115,6 +115,19 @@ class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
             'owner': self.OWNER_MAIL
         }
         self.assertEqual(self.clientClass.requestDict(request_format='update'), AGAINST)
+
+    def test_requestDict_for_delete(self):
+        
+        AGAINST = {
+            'email': self.CLIENT_MAIL,
+            'owner': self.OWNER_MAIL
+        }
+
+        self.assertEqual(self.clientClass.requestDict(request_format='delete'), AGAINST)
+        self.assertNotIn('contact', self.clientClass.requestDict(request_format='delete'))
+        self.assertNotIn('properties', self.clientClass.requestDict(request_format='delete'))
+        self.assertNotIn('tags', self.clientClass.requestDict(request_format='delete'))
+        self.assertNotIn('removeTags', self.clientClass.requestDict(request_format='delete'))
 
     def test_requestDict_with_partial_data_for_insert(self):
         TEST_ARGS = [

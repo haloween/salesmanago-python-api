@@ -4,7 +4,6 @@ import logging
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-
 from salesmanago_python_api.data.auth import SalesManagoAuthData
 from salesmanago_python_api.data.client import SalesManagoClientData
 
@@ -14,6 +13,7 @@ handler = logging.StreamHandler()
 formatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
 
 class SalesManagoClientService:
 
@@ -118,7 +118,7 @@ class SalesManagoClientService:
 
         if not isinstance(clientData, self.ClientData):
             raise TypeError('_generate_request accepts only SalesManagoClientData instances')
-        
+
         ALLOWED_ACTIONS = [k for k,v in self.ACTION_URLS.items()]
         if action not in ALLOWED_ACTIONS:
             raise ValueError('action must be on of %s' % ALLOWED_ACTIONS)
@@ -181,7 +181,7 @@ class SalesManagoClientService:
         }))
 
         return response
-    
+
     def upsert(self, clientData):
         if not isinstance(clientData, self.ClientData):
             raise TypeError('insert accepts only SalesManagoClientData instances')
@@ -197,7 +197,27 @@ class SalesManagoClientService:
             'request_body': request.body,
             'response_status': response.status_code,
             'response_json': response.json(),
-            'clientData': clientData.requestDict('insert')
+            'clientData': clientData.requestDict('upsert')
+        }))
+
+        return response
+    
+    def delete(self, clientData):
+        if not isinstance(clientData, self.ClientData):
+            raise TypeError('insert accepts only SalesManagoClientData instances')
+
+        request = self._generate_request(clientData, 'delete')
+        response = self._requestsSession.send(
+            request,
+            timeout=self.API_REQUEST_DEFAULT_TIMEOUT
+        )
+
+        logger.debug(json.dumps({
+            'action': 'delete',
+            'request_body': request.body,
+            'response_status': response.status_code,
+            'response_json': response.json(),
+            'clientData': clientData.requestDict('delete')
         }))
 
         return response
