@@ -5,6 +5,9 @@ python:
 install:
 - pip install requests
 script: python3 tests/run.py
+branches:
+  only:
+    - master
 deploy:
   provider: pypi
   username: __token__

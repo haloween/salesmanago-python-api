@@ -1,9 +1,9 @@
 import random
 from tests import utils as tests_utils
-from .test_data_base import SalesManagoTestsBase
+from .test_event_base import SalesManagoEventsTestsBase
 
 
-class SalesManagoClientDataFeatureTest(SalesManagoTestsBase):
+class SalesManagoEventDataFeatureTest(SalesManagoEventsTestsBase):
 
     def test_requestDict_for_minimal(self):
         AGAINST = {

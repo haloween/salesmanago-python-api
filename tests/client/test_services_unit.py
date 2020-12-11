@@ -8,6 +8,7 @@ from salesmanago_python_api.services.client import SalesManagoClientService
 
 class SalesManagoClientTest(SalesManagoClientTestBase):
 
+    #BASIC INITS
     def test_client_class_basic_init(self) -> None:
         apiKey = tests_utils.gen_string(12)
         clientId = tests_utils.gen_string(12)
@@ -36,9 +37,11 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
                 apiSecret=apiSecret, serverDomain=serverDomain
             )
 
+    #BASIC AUTH
     def test_client_class_authdata_init(self) -> None:
         self.assertIsInstance(self.clientClass._authData, SalesManagoAuthData)
 
+    #CLIENT DATA HELPERS
     def test_client_class_get_client_data_class(self) -> None:
         self.assertIs(self.clientClass.ClientData, SalesManagoClientData)
 
@@ -48,6 +51,7 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
             'owner': 'owner@mail.pl'
         }), SalesManagoClientData)
 
+    #CLIENT STUFF - PAYLOAD TYPECHECKS
     def test_generate_request_payload_insert_accepts_only_clientdata(self) -> None:
         with self.assertRaises(TypeError):
             self.clientClass._generate_payload({}, 'insert')
@@ -69,6 +73,7 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
     def test_generate_request_delete_update_dict(self) -> None:
         self.assertIsInstance(self.clientClass._generate_payload(self.clientDataMock, 'delete'), dict)
 
+    #CLIENT STUFF - PROPS CHECKS
     def test_generate_request_payload_insert_has_required_properties(self) -> None:
         payload = self.clientClass._generate_payload(self.clientDataMock, 'insert')
         self.assertIn('contact', payload)
@@ -90,6 +95,7 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
         self.assertIn('requestTime', payload)
         self.assertNotIn('apiSecret', payload)
 
+    #CLIENT - SESSION
     def test_request_session_setup(self):
         self.assertIsInstance(self.clientClass.session_setup(), requests.Session)
         self.assertIsInstance(self.clientClass._requestsSession, requests.Session)
@@ -104,6 +110,7 @@ class SalesManagoClientTest(SalesManagoClientTestBase):
         self.assertEqual(rsession_headers['Accept'], 'application/json, application/json')
         self.assertEqual(rsession_headers['Content-Type'], 'application/json;charset=UTF-8')
 
+    #CLIENT - REQUEST PAYLOADS
     def test_insert_takes_only_clientData(self):
         with self.assertRaises(TypeError):
             self.clientClass.insert({})

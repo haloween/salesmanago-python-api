@@ -1,11 +1,11 @@
 import datetime
 from unittest import TestCase
-from .test_data_base import SalesManagoTestsBase
+from .test_event_base import SalesManagoEventsTestsBase
 from tests.utils import gen_list_of_strings, gen_dict
 from salesmanago_python_api.data.event import SalesManagoEventData
 
 
-class SalesManagoEventDataUnitTest(SalesManagoTestsBase):
+class SalesManagoEventDataUnitTest(SalesManagoEventsTestsBase):
 
     def test_create_minimal_event_with_email(self):
         _min_event_data = self._min_event_data(fields=['owner', 'email', 'eventDate', 'contactExtEventType'])
