@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(name='salesmanago_python_api',
-      version='0.3',
+      version='0.4',
       description='Client for Salesmanago API.',
       long_description=long_description,
       long_description_content_type="text/markdown",
