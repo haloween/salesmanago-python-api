@@ -47,6 +47,9 @@ class SalesManagoClientData:
     VALID_STATES = ['CUSTOMER', 'PROSPECT', 'PARTNER', 'OTHER', 'UNKNOWN']
 
     def __post_init__(self):
+        if not self.owner:
+            raise ValueError('owner is required')
+
         if self.tags and not isinstance(self.tags, list):
             raise TypeError('tags should be a list')
         

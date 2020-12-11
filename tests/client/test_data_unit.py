@@ -11,6 +11,10 @@ class SalesManagoClientDataUnitTest(SalesManagoTestsBase):
         self.assertEqual(clientClass.email, self.CLIENT_MAIL)
         self.assertEqual(clientClass.owner, self.OWNER_MAIL)
 
+    def test_owner_not_provided(self):
+        with self.assertRaises(ValueError):
+            SalesManagoClientData(email=self.VALID_MAIL)
+
     def test_email_validated_on_create(self):
         with self.assertRaises(ValueError):
             for invalid_email in self.INVALID_MAILS:
@@ -101,7 +105,6 @@ class SalesManagoClientDataUnitTest(SalesManagoTestsBase):
         _rich_client_data['tags'] = gen_dict(10)
         with self.assertRaises(TypeError):
             cd = SalesManagoClientData(**_rich_client_data)
-
 
     def test_removeTags_add(self):
         self.clientClass.add_removeTags('read')
