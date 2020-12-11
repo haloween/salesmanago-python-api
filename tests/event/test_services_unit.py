@@ -186,6 +186,13 @@ class SalesManagoEventServiceUnitTest(SalesManagoEventsServiceTestBase):
     def test_addContactExtEvent_takes_only_eventData(self):
         with self.assertRaises(TypeError):
             self.clientClass.addContactExtEvent({})
+    
+    def test_batchAddContactExtEvent_takes_only_eventData_array(self):
+        '''
+            More checks are performed in generate payload etc..
+        '''
+        with self.assertRaises(TypeError):
+            self.clientClass.batchAddContactExtEvent({})
 
     def test_generate_request_requires_action(self):
         with self.assertRaises(TypeError):

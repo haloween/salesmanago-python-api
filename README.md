@@ -35,8 +35,8 @@ requests
 
 ## Services
 
-Currently ONLY client service is supported PARTIALLY.
-I've needed only a few client methods and those were implemented.
+Currently client service is supported PARTIALLY, event service is supported only for inserts.
+I've needed only a few methods and those were implemented.
 
 `SalesManagoClientService` handles:
 
@@ -45,7 +45,13 @@ I've needed only a few client methods and those were implemented.
 * update
 * delete
 
-## Usage
+`SalesManagoClientService` handles:
+
+* addContactExtEvent
+* batchAddContactExtEvent
+
+
+## Usage of Client Service
 
 Start with import ;)
 `from salesmanago_python_api.services import SalesManagoClientService`

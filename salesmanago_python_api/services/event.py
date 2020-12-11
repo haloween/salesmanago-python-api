@@ -147,11 +147,11 @@ class SalesManagoEventService:
         )
 
         logger.debug(json.dumps({
-            'action': 'insert',
+            'action': 'addContactExtEvent',
             'request_body': request.body,
             'response_status': response.status_code,
             'response_json': response.json(),
-            'eventData': eventData.requestDict('insert')
+            'eventData': eventData.requestDict('addContactExtEvent')
         }))
 
         return response
@@ -186,65 +186,24 @@ class SalesManagoEventService:
         )
 
         return self._requestsSession.prepare_request(rq)
-
-    '''
-    def update(self, clientData):
-        if not isinstance(clientData, self.ClientData):
-            raise TypeError('update accepts only SalesManagoClientData instances')
-
-        request = self._generate_request(clientData, 'update')
-        response = self._requestsSession.send(
-            request,
-            timeout=self.API_REQUEST_DEFAULT_TIMEOUT
-        )
-
-        logger.debug(json.dumps({
-            'action': 'update',
-            'request_body': request.body,
-            'response_status': response.status_code,
-            'response_json': response.json(),
-            'clientData': clientData.requestDict('update')
-        }))
-
-        return response
-
-    def upsert(self, clientData):
-        if not isinstance(clientData, self.ClientData):
-            raise TypeError('insert accepts only SalesManagoClientData instances')
-
-        request = self._generate_request(clientData, 'upsert')
-        response = self._requestsSession.send(
-            request,
-            timeout=self.API_REQUEST_DEFAULT_TIMEOUT
-        )
-
-        logger.debug(json.dumps({
-            'action': 'upsert',
-            'request_body': request.body,
-            'response_status': response.status_code,
-            'response_json': response.json(),
-            'clientData': clientData.requestDict('upsert')
-        }))
-
-        return response
     
-    def delete(self, clientData):
-        if not isinstance(clientData, self.ClientData):
-            raise TypeError('insert accepts only SalesManagoClientData instances')
+    def batchAddContactExtEvent(self, eventData):
 
-        request = self._generate_request(clientData, 'delete')
+        if type(eventData) is not type([]):
+            raise TypeError('batchAddContactExtEvent accepts only array of SalesManagoEventData instances')
+        
+        request = self._generate_request(eventData, 'batchAddContactExtEvent')
         response = self._requestsSession.send(
             request,
             timeout=self.API_REQUEST_DEFAULT_TIMEOUT
         )
 
         logger.debug(json.dumps({
-            'action': 'delete',
+            'action': 'batchAddContactExtEvent',
             'request_body': request.body,
             'response_status': response.status_code,
             'response_json': response.json(),
-            'clientData': clientData.requestDict('delete')
+            'eventData': [ed.requestDict() for ed in eventData]
         }))
 
         return response
-    '''
